@@ -1,5 +1,5 @@
 from openai import OpenAI
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="KEY")
 
 def generateAnswer(message):
     prompt = (
@@ -26,3 +26,4 @@ def generateAnswer(message):
     return response.output_text
 
 print(generateAnswer("Spiega il senso della vita"))
+
