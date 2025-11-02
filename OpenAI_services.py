@@ -25,5 +25,6 @@ def generateAnswer(message):
 
     return response.output_text
 
-print(generateAnswer("Spiega il senso della vita"))
+print(generateAnswer("")) #Messaggio da inviare
+
 
