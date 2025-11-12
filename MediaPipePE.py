@@ -70,8 +70,9 @@ def searchPerson():
             return(0)
 
     except AttributeError:
-        return(-200)
+        return(1)
 
     #cv2.imshow("Pose", frame)
     #if cv2.waitKey(1) & 0xFF == 27:  
     #break
+
