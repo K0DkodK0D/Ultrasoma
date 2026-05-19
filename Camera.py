@@ -2,14 +2,15 @@ import cv2
 from PIL import Image
 import io
 import base64
-camera = cv2.VideoCapture(0)
 
 def getFrame():
+    camera = cv2.VideoCapture(0)
     ret, frame = camera.read()
     if not ret:
             print("Errore: frame non trovato\n")
     
     RGBframe = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    camera.release()
     return RGBframe
 
 def encode64(frame):
@@ -22,6 +23,3 @@ def encode64(frame):
     img_b64 = base64.b64encode(img_bytes).decode("utf-8")   #Codifico i bytes in stringa ASCII (base 64)
 
     return img_b64
-
-def camRelease():
-      camera.release()
