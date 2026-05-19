@@ -14,37 +14,39 @@ dei landmark normalizzata in un valore compreso tra 0 e 1.0. (Es. 0 asse X -> es
 '''
 import mediapipe as mp
 import Camera as cam
+import cv2
 
 pose = mp.solutions.pose.Pose()
 
 
-#mp_drawing = mp.solutions.drawing_utils
-#mp_drawing_styles = mp.solutions.drawing_styles
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
 
-#show_landmarks = False
+show_landmarks = False
 
-#def draw_landmarks(frame, result, center, enable=True):
-#    if enable and result.pose_landmarks:
-#        mp_drawing.draw_landmarks(
-#            frame,
-#            result.pose_landmarks,
-#            mp.solutions.pose.POSE_CONNECTIONS,
-#            mp_drawing_styles.get_default_pose_landmarks_style()
-#        )
-#        h, w, _ = frame.shape
-#        center_px = int(center * w)
-#        center_py = h // 2      
-#
-#        cv2.circle(frame, (center_px, center_py), 6, (0, 255, 0), -1)
-#        
-#        leftBoundX = int(0.40 * w)
-#        rightBoundX= int(0.60 * w)
-#
-#        cv2.line(frame, (leftBoundX, 1), (leftBoundX, h), (0, 0, 255), 2)
-#        cv2.line(frame, (rightBoundX, 1), (rightBoundX, h), (0, 0, 255), 2)
+def draw_landmarks(frame, result, center, enable):
+    if enable and result.pose_landmarks:
+        mp_drawing.draw_landmarks(
+            frame,
+            result.pose_landmarks,
+            mp.solutions.pose.POSE_CONNECTIONS,
+            mp_drawing_styles.get_default_pose_landmarks_style()
+        )
+        h, w, _ = frame.shape
+        center_px = int(center * w)
+        center_py = h // 2      
 
+        cv2.circle(frame, (center_px, center_py), 6, (0, 255, 0), -1)
+        
+        leftBoundX = int(0.40 * w)
+        rightBoundX= int(0.60 * w)
 
-def searchPerson():        
+        cv2.line(frame, (leftBoundX, 1), (leftBoundX, h), (0, 0, 255), 2)
+        cv2.line(frame, (rightBoundX, 1), (rightBoundX, h), (0, 0, 255), 2)
+
+def releaseCam():
+    cam.camRelease()
+def searchPerson():  
     frame = cam.getFrame()
     result = pose.process(frame) 
     try:
@@ -57,22 +59,21 @@ def searchPerson():
             ((leftShoulder.x - rightShoulder.x)/2 + rightShoulder.x) + 
             ((leftHip.x - rightHip.x)/2 + rightHip.x)
         ) / 2
-
-        #draw_landmarks(frame, result, center, enable=show_landmarks)                                        #Disegno i landmark, il centro calcolato sull'asse orizzontale, e le rette che delimitano le aree di correzione
-
-        print(f"Centro: {center}    ")
+        #draw_landmarks(frame, result, center, show_landmarks)                                        #Disegno i landmark, il centro calcolato sull'asse orizzontale, e le rette che delimitano le aree di correzione
+        #cv2.imshow("Pose", cv2.cvtColor(frame, cv2.COLOR_RGB2BGR))
+        if cv2.waitKey(1) & 0xFF == 27:  
+            quit()
+        #print(f"Centro: {center}    ")
 
         if center < 0.40:
             return(-1)
         elif center > 0.60:
             return(1)
-        else:
+        elif center >= 0.40 and center <= 0.60:
             return(0)
+        else:
+            return(1)
+
 
     except AttributeError:
         return(1)
-
-    #cv2.imshow("Pose", frame)
-    #if cv2.waitKey(1) & 0xFF == 27:  
-    #break
-
